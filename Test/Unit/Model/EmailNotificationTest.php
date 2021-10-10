@@ -56,9 +56,6 @@ class EmailNotificationTest extends TestCase
      */
     private $objectManagerMock;
 
-    /**
-     * @inheritDoc
-     */
     protected function setUp(): void
     {
         $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
@@ -77,23 +74,23 @@ class EmailNotificationTest extends TestCase
             [
                 'inlineTranslation' => $this->inlineTranslationMock,
                 'scopeConfig' => $this->scopeConfigMock,
-                'transportBuilder' => $this->transportBuilderMock
+                'transportBuilder' => $this->transportBuilderMock,
             ]
         );
     }
 
-    /**
-     * @return void
-     */
-    public function testSendErrors(): void
+    public function testSendErrors()
     {
         $exception = 'Sitemap Exception';
         $transport = $this->getMockForAbstractClass(TransportInterface::class);
 
-        $this->scopeConfigMock
+        $this->scopeConfigMock->expects($this->at(0))
             ->method('getValue')
-            ->withConsecutive([Observer::XML_PATH_ERROR_TEMPLATE, ScopeInterface::SCOPE_STORE])
-            ->willReturn(['error-recipient@example.com']);
+            ->with(
+                Observer::XML_PATH_ERROR_TEMPLATE,
+                ScopeInterface::SCOPE_STORE
+            )
+            ->willReturn('error-recipient@example.com');
 
         $this->inlineTranslationMock->expects($this->once())
             ->method('suspend');
